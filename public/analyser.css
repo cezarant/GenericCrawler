@@ -5,6 +5,8 @@
 	}		
 	.mensagens
 	{
+		padding-top: 12px;		
 		height: 200px;
-		overflow-y:scroll; 
-	}	
+		overflow: scroll;
+	}		
+	

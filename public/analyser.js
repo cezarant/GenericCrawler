@@ -7,7 +7,7 @@
   
   $( document ).ready(function()
   {
-      
+      $('#sptelemetria').text('Aguardando...');
   });  
   function iniciarCrawler()
   {	
@@ -17,8 +17,9 @@
   {		
       socket.emit('messageBroadcast','pong');				
   }  
-  socket.on('messageBroadcast', function(msg)
+  socket.on('messageBroadcast', function(msgServidor)
   { 		
-      $('#sptelemetria').text(msg);		
+      $('#sptelemetria').text(msgServidor.dataHora +' - '+ msgServidor.msg);	
+      $('#messages').append($('<li>').text(msgServidor.dataHora +' - '+ msgServidor.msg));		
   });	  
 

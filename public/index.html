@@ -14,21 +14,25 @@
     <div class="container">
 	<div class="row">                
 	    	<div class="col-lg-12">                
-			<span id="sptelemetria">*</span>		
+			Último Comando:<span id="sptelemetria">*</span>		
 	        </div>		
-	</div>  
+	</div>  	
 	<div class="row">
-	    	<div class="col-lg-12">                		
-		<p><button id="iniciarCrawler" type="button" class="btn btn-danger" onclick="iniciarCrawler()">Iniciar</button>
-                </p>												  	
-		</div>
-	</div>	  
-	<div class="row">
-		   <div class="col-lg-12">
-			<textarea id="txtModulos"  style="width:900px;height:100px"></textarea>					 				
+		   <div class="col-lg-12">		      
+			   <ul class="mensagens" id="messages">									
+			   </ul>				 						      
 		   </div>
 	</div>
+	
+	<div class="row">
+	    <div class="col-lg-12">                		
+		<p><button id="iniciarCrawler" type="button" class="btn btn-danger" onclick="iniciarCrawler()">Iniciar</button>
+                </p>												  	
+	    </div>
+	</div>	  
+
 	<div id="divResultados"></div>
+
     </div> <!-- /container -->        	
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" /> 	
     <link href="analyser.css" rel="stylesheet"/>
