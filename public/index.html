@@ -15,21 +15,26 @@
 	<div class="row">                
 	    	<div class="col-lg-12">                
 			Último Comando:<span id="sptelemetria">*</span>		
+			Nome do Dvd:<input type="text" id="fname"/>			
 	        </div>		
 	</div>  	
 	<div class="row">
-		   <div class="col-lg-12">		      
+		   <div class="col-lg-8">		      
 			   <ul class="mensagens" id="messages">									
 			   </ul>				 						      
 		   </div>
-	</div>
+		   <div class="col-lg-8">		      
+		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('listar','')">Passo 1</button>
+                    </p>
+  		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('recuperarCapitulos','')">Passo 2 </button>
+                    </p>
+	            <p><button type="button" class="btn btn-danger" onclick="carregaCapitulosDigitados()">Passo 3</button>
+                    </p>												 
+		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('classificaItens','')">Passo 4</button>
+                    </p>												  	
+		   </div>	
+	</div>	
 	
-	<div class="row">
-	    <div class="col-lg-12">                		
-		<p><button id="iniciarCrawler" type="button" class="btn btn-danger" onclick="iniciarCrawler()">Iniciar</button>
-                </p>												  	
-	    </div>
-	</div>	  
 
 	<div id="divResultados"></div>
 
