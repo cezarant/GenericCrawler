@@ -47,7 +47,8 @@ module.exports = {
   },
 
   getAlbums : async idBanda => {
-    try {
+    try {  
+      console.log('Banda:',idBanda);	 
       return await db.all(" SELECT album.descricao, Album.id "  + 
 			  " FROM   ALBUM inner join Banda_Album on Banda_Album.id_album = Album.id " + 
 			  " where  Banda_Album.id_banda = " + idBanda);
@@ -59,7 +60,7 @@ module.exports = {
 
   getMusicas : async idAlbum => {
     try {
-      return await db.all(" select  descricao, id  from musica " + 
+      return await db.all(" select  descricao, id,track  from musica " + 
 			  " inner join Album_Musica on musica.id = Album_Musica.id_musica" + 
 			  " where Album_Musica.id_album =" +  idAlbum);
     } catch (dbError) {

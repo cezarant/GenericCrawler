@@ -319,6 +319,7 @@
 
 	app.get('/musicasporalbum', async (req, res, next) => {
     	   var musicas = await db.getMusicas(req.query.idAlbum);				        
+	   console.log(musicas); 
   	   res.send(musicas);	
 	});	
 
