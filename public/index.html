@@ -12,38 +12,19 @@
       </div>
     </nav>        
     <div class="container">
-	<div class="row">                
-	    	<div class="col-lg-12">                
-			Último Comando:<span id="sptelemetria">*</span>		
-			Nome do Dvd:<input type="text" id="fname"/>			
-	        </div>		
-	</div>  	
-	<div class="row">
-		   <div class="col-lg-8">		      
-			   <ul class="mensagens" id="messages">									
-			   </ul>				 						      
-		   </div>
-		   <div class="col-lg-8">		      
-		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('listar','')">Passo 1</button>
-                    </p>
-  		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('recuperarCapitulos','')">Passo 2 </button>
-                    </p>
-	            <p><button type="button" class="btn btn-danger" onclick="carregaCapitulosDigitados()">Passo 3</button>
-                    </p>												 
-		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('classificaItens','')">Passo 4</button>
-                    </p>												  	
-		   </div>	
-	</div>	
-	
-
-	<div id="divResultados"></div>
-
+	<div style="padding-top:5px">		
+		<div class="row">                
+	    		<div class="col-lg-12">                
+				<p><button type="button" class="btn btn-info" onclick="window.location.href='player.html'">Iniciar Player</button></p>
+				<p><button type="button" class="btn btn-success" onclick="window.location.href='parserdvd.html'">Parser de Dvd</button></p>
+		        </div>		
+		</div>  	
+	</div>
     </div> <!-- /container -->        	
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" /> 	
-    <link href="analyser.css" rel="stylesheet"/>
+    <link href="css/analyser.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.js"></script>	
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
-    <script src="analyser.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	    
   </body>
 </html>

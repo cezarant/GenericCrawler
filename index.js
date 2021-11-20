@@ -3,6 +3,10 @@
 	const app         = express(); 
 	const fs          = require('fs');
 	const { exec }    = require("child_process");
+        var parser        = require('xml2json');
+	const alfabet     = require('./alfabet.js');	
+	const db          = require('./sqlite.js');	
+        var usbDetect     = require('usb-detection'); 
         var metaDadosDvd  = undefined; 	
 	var http          = require('http').Server(app);	
 	var io            = require('socket.io')(http);
@@ -11,8 +15,7 @@
 	var nomeXml       = 'arquivos/capitulos.xml';
 	var listas        = "listas/itens.json";
 	var nomeDiretorio = 'listas/diretorio.json';
-        var parser        = require('xml2json');
-	const alfabet     = require('./alfabet.js');
+	var usbUnit       = '';
         var dirSemTags    = 'dvds/semtags';
 	var dirComTags    = 'dvds/comtags';
 	var itens         = [];
@@ -20,6 +23,7 @@
 	var comandosTag   = [];
 	var comandosFFMpeg = [];
         var comandoEjetar  = 'eject'; 
+	var intervalId; 
 	app.use(express.static(path.join(__dirname, 'public')));
 	/***************************  Socket.io ***************************************/
 	io.on('connection', function(socket)
@@ -43,6 +47,9 @@
 		  case "ejetar":
 			ejetar();
 			break;
+		  case "copiarPenDrive": 
+			copiarPenDrive();
+			break;
 		  default:
 			comunicaAoCliente({ status:1, msg: 'comando recebido', dataHora : recuperaDataHora()});
 	      }  	       				      	        
@@ -50,7 +57,25 @@
 	});	
 	function geraArquivosMp4(dados){
 	    metaDadosDvd = dados;
+	    console.log('Dados:',dados); 
+	    if(metaDadosDvd.tipodvd === 'cc'){
+	       var subChapters = []; 
+	       for(var i = 0;i< metaDadosDvd.chapters.length; i++)
+		  subChapters.push(metaDadosDvd.chapters[i]);	       	 
+
+	       metaDadosDvd.chapters[0] = subChapters; 		      		
+	    } 
+	    console.log('SubChapters:',metaDadosDvd.chapters[0].lenght); 
 	    geraMp4(0);	   			   					
+	}
+	function copiarPenDrive(){
+               comunicaAoCliente({ status:4, msg:'Inicio copia Pen Drive...', dataHora:recuperaDataHora()});	
+	       var comando = 	'cp ./'+ dirComTags +'/* ' + usbUnit +'/dvds/';
+	       console.log(comando); 	
+	       exec(comando, (error, stdout, stderr) => {	   
+		   gerenciaErroComando(error,stderr);			   			   		   
+		   comunicaAoCliente({ status:1, msg:'Fim da Copia pro PenDrive', dataHora:recuperaDataHora()});                  		   
+	       });       
 	}
 	function geraMp4(indiceCapitulo){
 	       var comando = 'HandBrakeCLI -i /dev/sr0 -t 1 -c '+ (indiceCapitulo + 1) +'  -e x264 -b 1000 -r 29.97 -w 480 -o "'+ dirSemTags + '/'+ 
@@ -110,7 +135,7 @@
 			gerenciaErroComando(err,undefined);			 			 			
 		    });		   
    	   }else{
-		    exec("ls "+ dirComTags +" -1 -R", (error, stdout, stderr) => {   
+		    exec("ls "+ dirSemTags +" -1 -R", (error, stdout, stderr) => {   
 			gerenciaErroComando(error,stdout);				    	                       
 	 		itens = alfabet.lendoItens(stdout); 
 			comunicaAoCliente({ status:1, msg: 'Arquivo de itens carregado...', dataHora : recuperaDataHora() }); 					
@@ -181,11 +206,27 @@
 
 	    if (stderr)
  	      comunicaAoCliente({ status:1, msg: stderr.message, dataHora : recuperaDataHora() });           
-	}         
+	}   
+	function verUSBInserido(){   capturaUSBUnit();  }
+	intervalId       = setInterval(verUSBInserido, 1500);         
 	function comunicaAoCliente(msg)
 	{
 	      io.emit('messageBroadcast',msg );
 	      console.log(msg); 	
+	} 
+	function capturaUSBUnit(){
+	      exec("findmnt -t vfat -o TARGET", (error, stdout, stderr) => {
+                   gerenciaErroComando(error,stderr);		  
+		   var lines = stdout.split('\n');
+		   lines.map(function(item){	 
+	   	      if((item !== 'TARGET') && (item !== '')){
+			usbUnit = item;	   			
+			clearInterval(intervalId);				
+		        comunicaAoCliente({ status:1, msg: 'Pen drive identificado:'+  usbUnit , dataHora : recuperaDataHora() });    	
+		      }
+		   });	    
+       });       	
+
 	} 
 	function recuperaDataHora(){
 		data      = new Date();
@@ -206,16 +247,85 @@
 	}		
 	/*******************************************************************************/
 	/***************************  API **********************************************/
-	http.listen(port, function(){
+	http.listen(port, function(){	
+		usbDetect.startMonitoring();
+		usbDetect.on('add', function(){ comunicaAoCliente({ status:1, msg: 'Pen Drive conectado..sem identificacao', dataHora:recuperaDataHora()});; });	
+    		usbDetect.on('remove', function(){ 
+		   comunicaAoCliente({ status:1, msg: 'Pen Drive ' + usbUnit + ' removido...', dataHora:recuperaDataHora()});				   
+	        intervalId = setInterval(verUSBInserido, 1500); 
+                });	
 		console.log(`listening on *: ${port} `);
 	});
 	app.get('/', function(req, res)
 	{
 	  res.sendFile(__dirname + '/index.html');
+	});	
+	app.get('/juke',function(req,res){
+		res.setHeader('Content-Type', 'application/json');	
+	    if (fs.existsSync(listas)){ 
+		fs.readFile(nomeDiretorio, "utf8", (err, jsonString) => {
+  			if (err){
+			    console.log("File read failed:", err);
+		            res.end(500);
+			}
+			var juke = {"Itens": JSON.parse(jsonString) };
+    	        	res.end(JSON.stringify({  juke  }, null, 3));	     	 
+		});
+	    }else{
+		res.end(null, 3);	
+	    } 
+  	});
+        app.get('/video/', function(req, res)
+        {			
+		const path = '/media/cezar/MX-LIVE/dvds/' + req.query.video;
+		const fs = require('fs');		
+		const stat = fs.statSync(path)
+		const fileSize = stat.size
+		const range = req.headers.range
+	
+		if (range){
+		    const parts = range.replace(/bytes=/, "").split("-");
+		    const start = parseInt(parts[0], 10);
+		    const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
+		    const chunksize = (end-start)+1
+		    const file = fs.createReadStream(path, {start, end});
+
+		    const head = {
+		      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+		      'Accept-Ranges': 'bytes',
+		      'Content-Length': chunksize,
+		      'Content-Type': 'audio/mpeg',
+		    }
+
+		    res.writeHead(206, head);
+		    file.pipe(res);
+
+		}else{
+		    const head ={ 'Content-Length': fileSize, 'Content-Type': 'audio/mpeg'}	
+		    res.writeHead(200, head);
+		    fs.createReadStream(path).pipe(res);
+	        }            
+        });        	
+		
+	app.get('/bandaporletra',  async (req, res, next) => {
+		var Bandas = await db.getOptions(req.query.letra);			
+		res.send(Bandas);	
 	});
+
+	app.get('/albumporbanda',  async (req, res, next) => {
+		var albuns = await db.getAlbums(req.query.idBanda);				        
+  	        res.send(albuns);	
+	});
+
+	app.get('/musicasporalbum', async (req, res, next) => {
+    	   var musicas = await db.getMusicas(req.query.idAlbum);				        
+  	   res.send(musicas);	
+	});	
+
 	/*******************************************************************************/
 	/**************************  Execucao de comando *******************************/
-	function listaDispositivosUsb(comando,comandoRetorno){	            
+	function listaDispositivosUsb(comando,comandoRetorno){	   
+		comunicaAoCliente({ status:1, msg:'Listando capitulos e gravando arquivo XML', dataHora:recuperaDataHora()});	         
         	exec(comando, (error, stdout, stderr) => {	   
   		   gerenciaErroComando(error,stderr);		   
 		   comunicaAoCliente({ status:1, msg:comandoRetorno, dataHora:recuperaDataHora()});				   

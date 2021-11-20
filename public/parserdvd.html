@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">           
+    <title>JukeBox - Casa Verde</title>        
+  </head>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">          
+          <a class="navbar-brand" href="#">Analisador de Dvd's</a>
+        </div>        
+      </div>
+    </nav>        
+    <div class="container">
+	<div class="row">                
+	    	<div class="col-lg-12">                
+			Último Comando:<span id="sptelemetria">*</span>		
+			Nome do Dvd:<input type="text" id="fname"/>			
+	        </div>		
+	</div>  	
+	<div class="row">
+		   <div class="col-lg-8">		      
+			   <ul class="mensagens" id="messages">									
+			   </ul>				 						      
+		   </div>
+		   <div class="col-lg-8">		      
+		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('listar','')">Passo 1 - Identificar Capitulos</button>
+                    </p>
+  		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('recuperarCapitulos','')">Passo 2 - Nomear Capitulos</button>
+                    </p>
+	            <p><button type="button" class="btn btn-danger" onclick="carregaCapitulosDigitados()">Passo 3 - Transformar em Mp4</button>
+                    </p>												 
+		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('classificaItens','')">Passo 4 - Classificar</button>	
+                    </p>
+		    <p><button type="button" class="btn btn-danger" onclick="interarCrawler('copiarPenDrive','')">Passo 5 - Copiar pro PenDrive</button>	
+                    </p>
+                    <p>Modalidade do DVD</p>
+		    <div>
+			    <input type="radio" name="tipodvd" value="cc">
+			    <label for="contactChoice1">Cada Capitulo é um clipe</label>
+			    <input type="radio" name="tipodvd" value="ccc">
+			    <label for="contactChoice2">Cada Capitulo contém varios clipes</label>    
+		    </div>
+		   </div>	
+	</div>	
+	
+
+	<div id="divResultados"></div>
+
+    </div> <!-- /container -->        	
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" /> 	
+    <link href="css/analyser.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>	
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
+    <script src="js/analyser.js"></script>
+  </body>
+</html>
