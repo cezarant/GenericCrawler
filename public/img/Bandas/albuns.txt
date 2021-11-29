@@ -1,0 +1,24 @@
+total 3908
+  0 -rw-r--r-- 1 cezar cezar      0 nov 22 19:13 albuns.txt
+ 48 -rw-r--r-- 1 cezar cezar  48996 nov 22 17:02 American Idiot.jpg
+208 -rw-r--r-- 1 cezar cezar 212326 nov 22 17:12 Cabeça Dinossauro.jpg
+ 60 -rw-r--r-- 1 cezar cezar  61403 nov 22 17:01 Dark Desert HighWays.jpg
+732 -rw-r--r-- 1 cezar cezar 745573 nov 22 17:03 Desde Aquela Noite.jpg
+364 -rw-r--r-- 1 cezar cezar 370082 nov 22 16:58 djavan.jpg
+ 36 -rw-r--r-- 1 cezar cezar  34958 nov 22 17:04 Experience.jpg
+468 -rw-r--r-- 1 cezar cezar 477176 nov 22 17:04 Isso e Amor.jpg
+ 36 -rw-r--r-- 1 cezar cezar  35758 nov 22 17:05 Legião Urbana.jpg
+ 48 -rw-r--r-- 1 cezar cezar  46848 nov 22 17:08 NeverMind.jpg
+200 -rw-r--r-- 1 cezar cezar 204212 nov 22 17:18 Nine Lives.jpg
+184 -rw-r--r-- 1 cezar cezar 186557 nov 22 17:09 OffSpring.jpg
+ 32 -rw-r--r-- 1 cezar cezar  28734 nov 22 17:00 Preco Curto..Longo Prazo.jpg
+320 -rw-r--r-- 1 cezar cezar 324467 nov 22 17:10 Queen II.jpg
+ 80 -rw-r--r-- 1 cezar cezar  78071 nov 22 17:12 Return to Forever.jpg
+180 -rw-r--r-- 1 cezar cezar 183835 nov 22 17:07 Ride The Lightning.jpg
+ 72 -rw-r--r-- 1 cezar cezar  72760 nov 22 17:11 Rolling Stones.jpg
+292 -rw-r--r-- 1 cezar cezar 298542 nov 22 17:19 Sgt Peppers.jpg
+ 84 -rw-r--r-- 1 cezar cezar  83326 nov 22 17:13 Sunday Bloody Sunday.jpg
+204 -rw-r--r-- 1 cezar cezar 208686 nov 22 17:10 The Division Bell.jpg
+  8 -rw-r--r-- 1 cezar cezar   5118 nov 22 17:14 Van Halen.jpeg
+156 -rw-r--r-- 1 cezar cezar 155784 nov 22 17:02 Wasting Light.jpg
+ 96 -rw-r--r-- 1 cezar cezar  95126 nov 22 17:15 Zé Ramalho.jpg

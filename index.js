@@ -317,6 +317,28 @@
   	        res.send(albuns);	
 	});
 
+	app.get('/bandas',  async (req, res, next) => {
+		var albuns = await db.getBandas();				        
+  	        res.send(albuns);	
+	});	
+
+	app.get('/ultimoTrack',  async (req, res, next) => {
+		var albuns = await db.getUltimaMusica('Banda');				        
+  	        res.send(albuns);	
+	});	
+
+	app.get('/ultimoAlbum',  async (req, res, next) => {
+		var albuns = await db.getUltimaMusica('Album');		
+		console.log(albuns); 		        
+  	        res.send(albuns);	
+	});	
+
+	app.post('/criaAlbum',  async (req, res, next) => {
+		console.log(req.query.nomeAlbum); 	
+		var albuns = await db.criaAlbum(req.query.nomeAlbum);				        
+  	        res.send(albuns);	
+	});		
+
 	app.get('/musicasporalbum', async (req, res, next) => {
     	   var musicas = await db.getMusicas(req.query.idAlbum);				        
 	   console.log(musicas); 

@@ -1,26 +1,39 @@
-var contVariavel = 0;
-var nivel        = 0  
-var letras       = [{ id: '0', mestre:'H', imgMestre: 'img/h.jpg', detalhes:'Bandas com a letra H' },
-                    { id: '0', mestre:'J', imgMestre: 'img/j.png', detalhes:'Bandas com a Letra J' }];
-var bandas       = [];
-var gabarito     = [];
-var porta        = 3002;
-var musicas      = [];
-var media;  
+var letras         = geraAlfabeto();
+var gabarito       = [];
+var playList       = [];
+var contVariavel   = 0;
+var nivel          = 0;
+var porta          = 3002;
+var media          = undefined; 
+var musicaTocando  = false; 
+var musicaEscolhida = undefined; 
 
 $(document).ready(function()
 {
      start();     
      media=document.getElementById("plTeste");
+     media.addEventListener('ended', (event) => 
+     {
+	musicaEscohida = playList.pop();	
+	carregaPlayer(musicaEscohida.id); 
+     });	
 });  
 
-function start(){
-     $("#imgMestre").show();
-     $("#subitens").hide();	     
-     nivel = 0; 
-     contVariavel =0; 	     
-     gabarito = letras; 
-     carregaAlfabeto();		
+
+
+function exibePlayList(){     
+    debugger; 
+    $("#subitens").empty();	
+    for(var j =0; j < playList.length;j++)		    
+       $("#subitens").append('<li class="list-group-item" id="'+ playList[j].id +'">'+ playList[j].descricao + '</li>');		
+} 
+function start(){     
+     $("#subitens").show();
+     $("#imgMestre").hide(); 	     
+     nivel        = 0; 
+     contVariavel = 0; 	     
+     gabarito     = letras;      
+     exibePlayList();
 }
 
 function avancaAlfabeto(){
@@ -43,7 +56,7 @@ function entraNivel(){
     if ((nivel + 1) < 4){
 	nivel = nivel + 1; 
 	carregaCard();
-    }	    	
+    }   	     		    	           
 } 
 function carregaCard(){
     var resposta = [];
@@ -55,13 +68,11 @@ function carregaCard(){
 	   recuperaBandasPorLetra(gabarito[contVariavel].mestre);		   
 	   break;	
 	case 2: 
-	   debugger; 
 	   recuperaAlbunsPorBanda(gabarito[contVariavel].id); 	
 	   break; 	
 	case 3: 
 	   $("#subitens").show();	
 	   $("#imgMestre").hide();
-	   debugger; 
 	   recuperarMusicasPorAlbum(gabarito[contVariavel].id); 	
 	   break; 		 
     } 	    	    
@@ -80,10 +91,8 @@ function recuperarMusicasPorAlbum(idAlbum){
               nivel = 0; 
 	      carregaCard();		
 	   }else{    	      
-	      $("#subitens").empty();
-		
+	      $("#subitens").empty();		
 	      gabarito = [];
-              debugger; 
 	      for(var i=0;i < result.length;i++){
 		 gabarito.push({ mestre: result[i].descricao, detalhes: result[i].descricao,id: result[i].track })
                  $("#subitens").append('<li class="list-group-item" id="'+ result[i].track +'">'+ result[i].descricao + '</li>');
@@ -98,12 +107,20 @@ function recuperarMusicasPorAlbum(idAlbum){
 	});
 
 } 
-function tocaMusica(){
+function carregaPlayer(track){
 	media.removeAttribute("src"); 
-        media.setAttribute('src','http://localhost:'+ porta +'/video?video='+ gabarito[contVariavel].id);	
+        media.setAttribute('src','http://localhost:'+ porta +'/video?video='+ track);	
 	media.pause();		
 	media.load();  
 	media.play();
+} 
+function tocaMusica(){
+      if(!musicaTocando){ 	
+	 carregaPlayer(gabarito[contVariavel].id); 
+	 musicaTocando = true; 	
+      }else{
+	 playList.push({ id: gabarito[contVariavel].id, descricao: gabarito[contVariavel].mestre});
+      } 
 }
 
 function recuperaAlbunsPorBanda(idBanda){    		
@@ -122,7 +139,7 @@ function recuperaAlbunsPorBanda(idBanda){
 	   }else{    
 	      gabarito = [];  
 	      for(var i=0;i < result.length;i++)
-	         gabarito.push({ mestre: result[i].descricao, detalhes: result[i].descricao , imgMestre: 'img/disco.jpg', id: result[i].id });  		     	       
+	         gabarito.push({ mestre: result[i].descricao, detalhes: result[i].descricao , imgMestre: 'img/Bandas/'+ result[i].descricao +'.jpg', id: result[i].id });  		     	       
 
               contVariavel = 0;
 	      carregaAlfabeto();	
@@ -141,14 +158,14 @@ function recuperaBandasPorLetra(letra){
 	  dataType: "json"
 	});
  
-	request.done(function(result){	   	   
+	request.done(function(result){
+	   debugger; 		   	   
 	   if(result.length  === 0){
 	      alert('A letra' + letra +' não possui Bandas cadastradas');
               nivel = 0; 
 	      carregaCard();		
 	   }else{    
 	      gabarito  = [];  
-	      debugger; 
 	      for(var i=0;i < result.length;i++)
 	         gabarito.push({ id: result[i].id , mestre: result[i].descricao, detalhes: result[i].descricao , imgMestre: 'img/banda.jpg' })  		   
 		
@@ -162,17 +179,18 @@ function recuperaBandasPorLetra(letra){
 	});
 } 
 function carregaAlfabeto(){           
-    $("#mestre").text(gabarito[contVariavel].mestre);   
-    $("#detalhes").text(gabarito[contVariavel].detalhes);	 		 			 	    
-    if(nivel === 3)
-    {
-	for(var j=0;j < gabarito.length;j++)
-           document.getElementById(gabarito[j].id).style.backgroundColor = 'white';  
+	$("#imgMestre").show();
+	$("#mestre").text(gabarito[contVariavel].mestre);   
+	$("#detalhes").text(gabarito[contVariavel].detalhes);	 		 			 	    
+	if(nivel === 3)
+	{
+	  for(var j=0;j < gabarito.length;j++)
+	     document.getElementById(gabarito[j].id).style.backgroundColor = 'white';  
 
-	document.getElementById(gabarito[contVariavel].id).style.backgroundColor = 'green' ;       
-    }else{
-        $("#imgMestre").attr("src",gabarito[contVariavel].imgMestre); 
-    } 
+	      document.getElementById(gabarito[contVariavel].id).style.backgroundColor = 'green' ;       
+	}else{
+	  $("#imgMestre").attr("src",gabarito[contVariavel].imgMestre); 
+	} 
 }
 
  

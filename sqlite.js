@@ -1,23 +1,10 @@
-/**
- * Module handles database management
- *
- * Server API calls the methods in here to query and update the SQLite database
- */
-
-// Utilities we need
 const fs = require("fs");
-
-// Initialize the database
 const dbFile = "2.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const dbWrapper = require("sqlite");
 let db;
 
-/* 
-We're using the sqlite wrapper so that we can make async / await connections
-- https://www.npmjs.com/package/sqlite
-*/
 dbWrapper
   .open({
     filename: dbFile,
@@ -27,24 +14,24 @@ dbWrapper
     db = dBase;
   });
 
-// Our server script will call these methods to connect to the db
-module.exports = {
-  
-  /**
-   * Get the options in the database
-   *
-   * Return everything in the Choices table
-   * Throw an error in case of db connection issues
-   */
-  getOptions: async letra => {
-    // We use a try catch block in case of db errors
+module.exports = {  
+  getOptions: async letra => {    
     try {
-      return await db.all("select descricao, id  from Banda  where  letra = '"+ letra +"'");
+        console.log('getOptions',letra);  
+	return await db.all("select descricao, id  from Banda  where  letra = '"+ letra +"'");
     } catch (dbError) {
-      // Database connection error
       console.error(dbError);
     }
   },
+
+  getBandas : async idBanda => {
+    try {  
+      return await db.all(" select id,descricao from banda ");
+    } catch (dbError) {
+      // Database connection error
+      console.error(dbError);
+    }	
+  }, 	
 
   getAlbums : async idBanda => {
     try {  
@@ -67,27 +54,33 @@ module.exports = {
       console.error(dbError);
     }	
   },
-  /**
-   * Get logs
-   *
-   * Return choice and time fields from all records in the Log table
-   */
-  getLogs: async () => {
-    // Return most recent 20
+
+  getUltimaMusica  : async idAlbum => {
     try {
-      // Return the array of log entries to admin page
+      return await db.all("select seq,name from sqlite_sequence  where  name = '"+ idAlbum +"'");
+    } catch (dbError) {
+      console.error(dbError);
+    }	
+  },
+
+  getLogs: async () => {
+    try {
+
       return await db.all("SELECT * from Log ORDER BY time DESC LIMIT 20");
     } catch (dbError) {
       console.error(dbError);
     }
   },
 
-  /**
-   * Clear logs and reset votes
-   *
-   * Destroy everything in Log table
-   * Reset votes in Choices table to zero
-   */
+  criaAlbum : async nomeAlbum => {
+    console.log('caralho:',nomeAlbum); 	
+    try {
+     await db.run("insert into Album (descricao) values ('"+ nomeAlbum +"')");
+    } catch (dbError) {
+      console.error(dbError);
+    }	
+  },	
+	 	   
   clearHistory: async () => {
     try {
       // Delete the logs
